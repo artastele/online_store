@@ -16,7 +16,7 @@
     <div class="products-grid">
     <?php foreach($products as $p): ?>
     <div class="product">
-        <img src="assets/images/<?= htmlspecialchars($p['image'] ?: 'image1.jpeg') ?>" alt="<?= htmlspecialchars($p['name']) ?>">
+        <img src="assets/images/<?= htmlspecialchars($p['image'] ?: 'default.jpg') ?>" alt="<?= htmlspecialchars($p['name']) ?>">
         <div class="product-content">
             <h3><?= htmlspecialchars($p['name']) ?></h3>
             <p><?= htmlspecialchars($p['description']) ?></p>
