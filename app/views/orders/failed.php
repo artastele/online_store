@@ -11,15 +11,13 @@
 </header>
 
 <main class="container">
-    <div class="alert success">
-        <h1>Order Successful!</h1>
-        <?php if (isset($_SESSION['order_id'])): ?>
-        <p>Your order number is: <strong><?php echo htmlspecialchars($_SESSION['order_id']); unset($_SESSION['order_id']); ?></strong></p>
-        <?php endif; ?>
-        <p>Thank you for your order! You will receive a confirmation email shortly.</p>
+    <div class="alert error">
+        <h1>Payment Failed</h1>
+        <p>Sorry, your payment could not be processed. Please try again.</p>
     </div>
 
-    <a href="../" class="btn">Continue Shopping</a>
+    <a href="../checkout" class="btn">Try Again</a>
+    <a href="../" class="btn btn-secondary">Back to Products</a>
     <a href="history" class="btn btn-secondary">View Order History</a>
 </main>
 

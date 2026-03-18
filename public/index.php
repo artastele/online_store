@@ -16,7 +16,7 @@ require_once '../app/controllers/OrderController.php';
 
 $request = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 
-$base = '/online_store_MVC/public';
+$base = '/online_store_mvc/public';
 $request = str_replace($base, '', $request);
 
 if ($request === '' || $request === '/') {
@@ -43,6 +43,12 @@ elseif ($request === '/cart/remove') {
     $controller->remove();
 
 }
+elseif ($request === '/cart/update') {
+
+    $controller = new CartController($conn);
+    $controller->update();
+
+}
 elseif ($request === '/checkout') {
 
     $controller = new CheckoutController($conn);
@@ -55,10 +61,36 @@ elseif ($request === '/checkout/process') {
     $controller->process();
 
 }
-elseif ($request === '/orders/success') {
+elseif (preg_match('#^/orders/success(?:/(\d+))?$#', $request, $matches)) {
+
+    $order_id = $matches[1] ?? null;
+    $controller = new OrderController($conn);
+    $controller->success($order_id);
+
+}
+elseif (preg_match('#^/orders/failed(?:/(\d+))?$#', $request, $matches)) {
+
+    $order_id = $matches[1] ?? null;
+    $controller = new OrderController($conn);
+    $controller->failed($order_id);
+
+}
+elseif ($request === '/orders/view') {
 
     $controller = new OrderController($conn);
-    $controller->success();
+    $controller->view();
+
+}
+elseif ($request === '/orders/history') {
+
+    $controller = new OrderController($conn);
+    $controller->history();
+
+}
+elseif ($request === '/webhook/paymongo') {
+
+    $controller = new OrderController($conn);
+    $controller->webhook();
 
 }
 else {

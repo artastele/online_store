@@ -7,11 +7,11 @@ class Order {
         $this->conn = $conn;
     }
 
-    public function create($user_id, $total, $cart) {
+    public function create($total, $cart) {
         $status = 'pending';
 
-        $stmt = $this->conn->prepare("INSERT INTO orders (user_id, total_amount, payment_status) VALUES (?, ?, ?)");
-        $stmt->bind_param("ids", $user_id, $total, $status);
+        $stmt = $this->conn->prepare("INSERT INTO orders (total_amount, payment_status) VALUES (?, ?)");
+        $stmt->bind_param("ds", $total, $status);
         $stmt->execute();
 
         $order_id = $stmt->insert_id;
@@ -32,5 +32,39 @@ class Order {
         $stmt = $this->conn->prepare("UPDATE orders SET payment_status = ?, payment_reference = ? WHERE id = ?");
         $stmt->bind_param("ssi", $status, $reference, $order_id);
         $stmt->execute();
+    }
+
+    public function getOrderByPaymentReference($reference) {
+        $stmt = $this->conn->prepare("SELECT * FROM orders WHERE payment_reference = ?");
+        $stmt->bind_param("s", $reference);
+        $stmt->execute();
+        return $stmt->get_result()->fetch_assoc();
+    }
+
+    public function getOrderById($id) {
+        $stmt = $this->conn->prepare("SELECT * FROM orders WHERE id = ?");
+        $stmt->bind_param("i", $id);
+        $stmt->execute();
+        return $stmt->get_result()->fetch_assoc();
+    }
+
+    public function getOrderItems($order_id) {
+        $stmt = $this->conn->prepare("SELECT oi.*, p.name FROM order_items oi JOIN products p ON oi.product_id = p.id WHERE oi.order_id = ?");
+        $stmt->bind_param("i", $order_id);
+        $stmt->execute();
+        return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    }
+
+    public function getAllOrders($status = '') {
+        $sql = "SELECT * FROM orders";
+        if ($status) {
+            $sql .= " WHERE payment_status = ?";
+            $stmt = $this->conn->prepare($sql);
+            $stmt->bind_param("s", $status);
+        } else {
+            $stmt = $this->conn->prepare($sql);
+        }
+        $stmt->execute();
+        return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
     }
 }
